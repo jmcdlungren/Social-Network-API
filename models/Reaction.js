@@ -1,6 +1,6 @@
 const { Schema, Types } = require('mongoose');
 
-const assignmentSchema = new Schema(
+const reactionSchema = new Schema(
   {
     assignmentId: {
       type: Schema.Types.ObjectId,
@@ -31,4 +31,6 @@ const assignmentSchema = new Schema(
   }
 );
 
-module.exports = assignmentSchema;
+const Reaction = model('reaction', reactionSchema);
+
+module.exports = Reaction;
