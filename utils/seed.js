@@ -1,59 +1,49 @@
-const { getRandomName, getRandomThoughts } = require('./data');
-const { User, Thought } = require('../models');
 const connection = require('../config/connection');
+const { User, Thought } = require('../models');
+const { users, thoughts } = require('./data');
 
-// Function to seed users
-const seedUsers = async () => {
+connection.on('error', console.error.bind(console, 'connection error:'));
+connection.once('open', async () => {
+  console.log('Connected to MongoDB database.');
+
   try {
-    // Clear existing users
-    await User.deleteMany();
+    // Clear existing data
+    await User.deleteMany({});
+    await Thought.deleteMany({});
 
-    // Generate and save new users
-    const users = [];
-    for (let i = 0; i < 5; i++) {
-      const username = getRandomName();
-      const email = `${username.toLowerCase().replace(' ', '')}@example.com`;
+    // Create users
+    const createdUsers = await User.create(users);
 
-      const user = await User.create({ username, email });
-      users.push(user);
+    // Populate friends
+    for (const user of createdUsers) {
+      const { username, friends } = users.find((u) => u.username === user.username);
+      const friendObjects = [];
+
+      for (const friendUsername of friends) {
+        const friendUser = createdUsers.find((u) => u.username === friendUsername);
+        friendObjects.push(friendUser._id);
+      }
+
+      user.friends = friendObjects;
+      await user.save();
     }
 
-    console.log('Users seeded successfully:', users);
-  } catch (err) {
-    console.error('Error seeding users:', err);
-  }
-};
+    // Map created users to add the generated user IDs to the thoughts
+    const thoughtsWithUsers = thoughts.map((thought) => {
+      const user = createdUsers.find((u) => u.username === thought.username);
+      return {
+        ...thought,
+        username: user._id
+      };
+    });
 
-// Function to seed thoughts
-const seedThoughts = async () => {
-  try {
-    // Clear existing thoughts
-    await Thought.deleteMany();
+    // Create thoughts
+    await Thought.create(thoughtsWithUsers);
 
-    // Generate and save new thoughts
-    const thoughts = getRandomThoughts(10);
-    const createdThoughts = await Thought.create(thoughts);
-
-    console.log('Thoughts seeded successfully:', createdThoughts);
-  } catch (err) {
-    console.error('Error seeding thoughts:', err);
-  }
-};
-
-// Event listener for database connection error
-connection.on('error', (err) => {
-  console.error('Database connection error:', err);
-});
-
-// Event listener for successful database connection
-connection.once('open', async () => {
-  try {
-    await seedUsers();
-    await seedThoughts();
-    console.log('Database seeded successfully');
-    connection.close();
-  } catch (err) {
-    console.error('Error seeding database:', err);
-    connection.close();
+    console.log('Data seeded successfully!');
+    process.exit(0);
+  } catch (error) {
+    console.error('Error seeding data:', error);
+    process.exit(1);
   }
 });

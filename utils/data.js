@@ -1,15 +1,4 @@
-const names = [
-  'Alice',
-  'Bob',
-  'Charlie',
-  'David',
-  'Eve',
-  'Frank',
-  'Grace',
-  'Henry',
-  'Ivy',
-  'Jack'
-];
+const { ObjectId } = require('mongoose').Types;
 
 const thoughts = [
   {
@@ -17,13 +6,13 @@ const thoughts = [
     username: 'Alice',
     reactions: [
       {
-        reactionId: 1,
+        reactionId: new ObjectId(),
         reactionBody: 'I agree!',
         username: 'Bob',
         createdAt: new Date()
       },
       {
-        reactionId: 2,
+        reactionId: new ObjectId(),
         reactionBody: 'That\'s interesting.',
         username: 'Charlie',
         createdAt: new Date()
@@ -35,13 +24,13 @@ const thoughts = [
     username: 'Bob',
     reactions: [
       {
-        reactionId: 3,
+        reactionId: new ObjectId(),
         reactionBody: 'Me too!',
         username: 'Alice',
         createdAt: new Date()
       },
       {
-        reactionId: 4,
+        reactionId: new ObjectId(),
         reactionBody: 'Coding is fun.',
         username: 'Charlie',
         createdAt: new Date()
@@ -53,13 +42,13 @@ const thoughts = [
     username: 'Charlie',
     reactions: [
       {
-        reactionId: 5,
+        reactionId: new ObjectId(),
         reactionBody: 'Absolutely!',
         username: 'Alice',
         createdAt: new Date()
       },
       {
-        reactionId: 6,
+        reactionId: new ObjectId(),
         reactionBody: 'I love spending time in nature.',
         username: 'Bob',
         createdAt: new Date()
@@ -71,13 +60,13 @@ const thoughts = [
     username: 'David',
     reactions: [
       {
-        reactionId: 7,
+        reactionId: new ObjectId(),
         reactionBody: 'Music is my passion too!',
         username: 'Alice',
         createdAt: new Date()
       },
       {
-        reactionId: 8,
+        reactionId: new ObjectId(),
         reactionBody: 'What\'s your favorite genre?',
         username: 'Charlie',
         createdAt: new Date()
@@ -89,13 +78,13 @@ const thoughts = [
     username: 'Eve',
     reactions: [
       {
-        reactionId: 9,
+        reactionId: new ObjectId(),
         reactionBody: 'Couldn\'t agree more!',
         username: 'Alice',
         createdAt: new Date()
       },
       {
-        reactionId: 10,
+        reactionId: new ObjectId(),
         reactionBody: 'Family is everything.',
         username: 'Bob',
         createdAt: new Date()
@@ -104,27 +93,57 @@ const thoughts = [
   }
 ];
 
-// Get a random item given an array
-const getRandomArrItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-// Gets a random full name
-const getRandomName = () =>
-  `${getRandomArrItem(names)} ${getRandomArrItem(names)}`;
-
-// Function to generate random thoughts
-const getRandomThoughts = (int) => {
-  const results = [];
-  for (let i = 0; i < int; i++) {
-    const thought = getRandomArrItem(thoughts);
-    results.push({
-      thoughtText: thought.thoughtText,
-      username: thought.username
-    });
+const users = [
+  {
+    username: 'Alice',
+    email: 'alice@example.com',
+    friends: []
+  },
+  {
+    username: 'Bob',
+    email: 'bob@example.com',
+    friends: []
+  },
+  {
+    username: 'Charlie',
+    email: 'charlie@example.com',
+    friends: []
+  },
+  {
+    username: 'David',
+    email: 'david@example.com',
+    friends: []
+  },
+  {
+    username: 'Eve',
+    email: 'eve@example.com',
+    friends: []
+  },
+  {
+    username: 'Frank',
+    email: 'frank@example.com',
+    friends: []
+  },
+  {
+    username: 'Grace',
+    email: 'grace@example.com',
+    friends: []
+  },
+  {
+    username: 'Henry',
+    email: 'henry@example.com',
+    friends: []
+  },
+  {
+    username: 'Ivy',
+    email: 'ivy@example.com',
+    friends: []
+  },
+  {
+    username: 'Jack',
+    email: 'jack@example.com',
+    friends: []
   }
-  return results;
-};
+];
 
-module.exports = {
-  getRandomName,
-  getRandomThoughts
-};
+module.exports = { users, thoughts };
