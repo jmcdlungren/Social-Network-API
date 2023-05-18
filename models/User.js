@@ -29,16 +29,9 @@ const userSchema = new Schema(
   {
     toJSON: {
       getters: true,
-      virtuals: true, // Enable virtual properties in the JSON representation
     },
-    id: false, // Disable the default 'id' virtual property
   }
 );
-
-// Define the virtual property 'friendCount'
-userSchema.virtual('friendCount').get(function () {
-  return this.friends.length;
-});
 
 const User = model('user', userSchema);
 
