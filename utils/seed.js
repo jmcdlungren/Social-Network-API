@@ -1,51 +1,59 @@
+const { getRandomName, getRandomThoughts } = require('./data');
+const { User, Thought } = require('../models');
 const connection = require('../config/connection');
-const { Course, Student } = require('../models');
-const { getRandomName, getRandomAssignments } = require('./data');
 
-connection.on('error', (err) => err);
+// Function to seed users
+const seedUsers = async () => {
+  try {
+    // Clear existing users
+    await User.deleteMany();
 
-connection.once('open', async () => {
-  console.log('connected');
+    // Generate and save new users
+    const users = [];
+    for (let i = 0; i < 5; i++) {
+      const username = getRandomName();
+      const email = `${username.toLowerCase().replace(' ', '')}@example.com`;
 
-  // Drop existing courses
-  await Course.deleteMany({});
+      const user = await User.create({ username, email });
+      users.push(user);
+    }
 
-  // Drop existing students
-  await Student.deleteMany({});
-
-  // Create empty array to hold the students
-  const students = [];
-
-  // Loop 20 times -- add students to the students array
-  for (let i = 0; i < 20; i++) {
-    // Get some random assignment objects using a helper function that we imported from ./data
-    const assignments = getRandomAssignments(20);
-
-    const fullName = getRandomName();
-    const first = fullName.split(' ')[0];
-    const last = fullName.split(' ')[1];
-    const github = `${first}${Math.floor(Math.random() * (99 - 18 + 1) + 18)}`;
-
-    students.push({
-      first,
-      last,
-      github,
-      assignments,
-    });
+    console.log('Users seeded successfully:', users);
+  } catch (err) {
+    console.error('Error seeding users:', err);
   }
+};
 
-  // Add students to the collection and await the results
-  await Student.collection.insertMany(students);
+// Function to seed thoughts
+const seedThoughts = async () => {
+  try {
+    // Clear existing thoughts
+    await Thought.deleteMany();
 
-  // Add courses to the collection and await the results
-  await Course.collection.insertOne({
-    courseName: 'UCLA',
-    inPerson: false,
-    students: [...students],
-  });
+    // Generate and save new thoughts
+    const thoughts = getRandomThoughts(10);
+    const createdThoughts = await Thought.create(thoughts);
 
-  // Log out the seed data to indicate what should appear in the database
-  console.table(students);
-  console.info('Seeding complete! 🌱');
-  process.exit(0);
+    console.log('Thoughts seeded successfully:', createdThoughts);
+  } catch (err) {
+    console.error('Error seeding thoughts:', err);
+  }
+};
+
+// Event listener for database connection error
+connection.on('error', (err) => {
+  console.error('Database connection error:', err);
+});
+
+// Event listener for successful database connection
+connection.once('open', async () => {
+  try {
+    await seedUsers();
+    await seedThoughts();
+    console.log('Database seeded successfully');
+    connection.close();
+  } catch (err) {
+    console.error('Error seeding database:', err);
+    connection.close();
+  }
 });
