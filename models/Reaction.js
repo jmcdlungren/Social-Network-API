@@ -1,36 +1,31 @@
-const { Schema, Types } = require('mongoose');
+const { Schema } = require('mongoose');
 
 const reactionSchema = new Schema(
   {
-    assignmentId: {
+    reactionId: {
       type: Schema.Types.ObjectId,
-      default: () => new Types.ObjectId(),
+      default: () => new mongoose.Types.ObjectId()
     },
-    assignmentName: {
+    reactionBody: {
       type: String,
       required: true,
-      maxlength: 50,
-      minlength: 4,
-      default: 'Unnamed assignment',
+      maxlength: 280
     },
-    score: {
-      type: Number,
-      required: true,
-      default: () => Math.floor(Math.random() * (100 - 70 + 1) + 70),
+    username: {
+      type: String,
+      required: true
     },
     createdAt: {
       type: Date,
       default: Date.now,
-    },
+      get: function (timestamp) {
+        return new Date(timestamp).toISOString();
+      }
+    }
   },
   {
-    toJSON: {
-      getters: true,
-    },
-    id: false,
+    toJSON: { getters: true }
   }
 );
 
-const Reaction = model('reaction', reactionSchema);
-
-module.exports = Reaction;
+module.exports = reactionSchema;
