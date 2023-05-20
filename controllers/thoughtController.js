@@ -1,4 +1,4 @@
-const { Thought, User } = require('../models');
+const { Thought, User, reactionSchema } = require('../models');
 
 const thoughtController = {
   // Get all thoughts
@@ -67,15 +67,18 @@ const thoughtController = {
   // Delete a thought by its _id
   async deleteThought(req, res) {
     try {
-      const thought = await Thought.findByIdAndDelete(req.params.thoughtId);
+      const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
+
       if (!thought) {
         return res.status(404).json({ message: 'Thought not found' });
       }
-      await User.findByIdAndUpdate(
-        thought.username,
-        { $pull: { thoughts: thought._id } },
+
+      await User.findOneAndUpdate(
+        {thoughts: req.params.thoughtId},
+        { $pull: { thoughts: req.params.thoughtId } },
         { new: true }
       );
+
       res.json({ message: 'Thought deleted' });
     } catch (err) {
       console.log(err);

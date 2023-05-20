@@ -7,22 +7,6 @@ const userCount = async () => {
   return numberOfUsers;
 };
 
-// Aggregate function for getting the overall thought rating using $avg
-const thoughtRating = async (userId) =>
-  User.aggregate([
-    // only include the given user by using $match
-    { $match: { _id: new ObjectId(userId) } },
-    {
-      $unwind: '$thoughts',
-    },
-    {
-      $group: {
-        _id: new ObjectId(userId),
-        overallRating: { $avg: '$thoughts.rating' },
-      },
-    },
-  ]);
-
 module.exports = {
   // Get all users
   async getAllUsers(req, res) {
@@ -44,19 +28,17 @@ module.exports = {
   // Get a single user
   async getUserById(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.id })
-        .populate('thoughts')
-        .populate('friends')
-        .select('-__v');
+      const user = await User.findOne({ _id: req.params.userId })
+        .select('-__v')
+        
 
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      res.json({
-        user,
-        thoughtRating: await thoughtRating(req.params.id),
-      });
+      res.json(
+        user
+      );
     } catch (err) {
       console.log(err);
       return res.status(500).json(err);
@@ -78,10 +60,11 @@ module.exports = {
   // Update a user
   async updateUser(req, res) {
     try {
-      const { id } = req.params;
-      const updatedUser = await User.findByIdAndUpdate(id, req.body, {
-        new: true,
-      });
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $set: req.body },
+        { runValidators: true, new: true }
+      );
 
       if (!updatedUser) {
         return res.status(404).json({ message: 'User not found' });
@@ -97,8 +80,7 @@ module.exports = {
   // Delete a user
   async deleteUser(req, res) {
     try {
-      const { id } = req.params;
-      const deletedUser = await User.findByIdAndDelete(id);
+      const deletedUser = await User.findOneAndRemove({ _id: req.params.userId });
 
       if (!deletedUser) {
         return res.status(404).json({ message: 'User not found' });
