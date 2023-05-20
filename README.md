@@ -20,7 +20,19 @@ As this is a back end based project, if this repo is downloaded, the user will n
 
 ## Usage
 
-When the user runs the applicable routes for view all users, view all thoughts, create user, create reaction, add friend, etc., the user will be able to see the results within the Insomnia application. Some example videos are below. You can click on the GIFs to go to the Google Drive video as well.
+When the user runs the applicable routes for view all users, view all thoughts, create user, create reaction, add friend, etc., the user will be able to see the results within the Insomnia application. Some example videos are below, where you can view the GIFs or go directly to the associated Google Drive link.
+
+### Users and Friends
+
+[Google Drive Video](https://drive.google.com/file/d/1ApdfL5vr9_JUJLCrCVOgCIsKl9UMnAhQ/view)
+
+![GIF](./Images/Users%20and%20Friends.gif)
+
+### Thoughts and Reactions
+
+[Google Drive Video](https://drive.google.com/file/d/1JIWubRar3SvX--ZHNR4-ZacBV9-iZwTZ/view)
+
+![GIF](./Images/Thoughts%20and%20Reactions.gif)
 
 ## License
 
